@@ -17,6 +17,8 @@ import { getErrorMessage } from '../../lib/errors'
 import { AchievementForm } from '../../features/achievements/AchievementForm'
 import { unwrapList } from '../../lib/response'
 
+import { getTopics } from '../../api/topicsApi'
+
 export function AchievementPage() {
   const queryClient = useQueryClient()
   const [selectedDeleteId, setSelectedDeleteId] = useState(null)
@@ -26,6 +28,13 @@ export function AchievementPage() {
     queryKey: ['achievements'],
     queryFn: getAchievements,
   })
+
+  const { data: topicsData } = useQuery({
+    queryKey: ['topics'],
+    queryFn: getTopics,
+  })
+  
+  const topics = unwrapList(topicsData)
 
   const createMutation = useMutation({
     mutationFn: createAchievement,
@@ -63,7 +72,7 @@ export function AchievementPage() {
       <PageHeader title="Achievements" description="Basarim tanimlari ve kosullarini yonetin." />
 
       <Panel title="Yeni Achievement">
-        <AchievementForm onSubmit={(values) => createMutation.mutate(values)} loading={createMutation.isPending} submitLabel="Ekle" />
+        <AchievementForm topics={topics} onSubmit={(values) => createMutation.mutate(values)} loading={createMutation.isPending} submitLabel="Ekle" />
       </Panel>
 
       {editingItem ? (
@@ -80,6 +89,7 @@ export function AchievementPage() {
             onSubmit={(values) => updateMutation.mutate({ id: editingItem.id, payload: values })}
             loading={updateMutation.isPending}
             submitLabel="Guncelle"
+            topics={topics}
           />
         </Panel>
       ) : null}
@@ -96,27 +106,40 @@ export function AchievementPage() {
                 <th className="px-4 py-3 font-semibold">ID</th>
                 <th className="px-4 py-3 font-semibold">Baslik</th>
                 <th className="px-4 py-3 font-semibold">Kod</th>
+                <th className="px-4 py-3 font-semibold">Topic</th>
                 <th className="px-4 py-3 font-semibold text-right">Islem</th>
               </tr>
             </thead>
             <tbody>
-              {achievements.map((item) => (
-                <tr key={item.id} className="border-t border-slate-100">
-                  <td className="px-4 py-3 text-slate-600">{item.id}</td>
-                  <td className="px-4 py-3 font-medium text-slate-900">{item.title}</td>
-                  <td className="px-4 py-3 text-slate-600">{item.code}</td>
-                  <td className="px-4 py-3">
-                    <div className="flex justify-end gap-2">
-                      <Button variant="secondary" onClick={() => setEditingItem(item)}>
-                        <Pencil className="mr-2 h-4 w-4" /> Duzenle
-                      </Button>
-                      <Button variant="danger" onClick={() => setSelectedDeleteId(item.id)}>
-                        <Trash2 className="mr-2 h-4 w-4" /> Sil
-                      </Button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
+              {achievements.map((item) => {
+                const topic = topics.find(t => t.id === item.topicId)
+                return (
+                  <tr key={item.id} className="border-t border-slate-100">
+                    <td className="px-4 py-3 text-slate-600">{item.id}</td>
+                    <td className="px-4 py-3 font-medium text-slate-900">{item.title}</td>
+                    <td className="px-4 py-3 text-slate-600">{item.code}</td>
+                    <td className="px-4 py-3 text-slate-600">
+                      {topic ? (
+                        <span className="inline-flex items-center rounded-full bg-emerald-50 px-2 py-1 text-xs font-medium text-emerald-700 ring-1 ring-inset ring-emerald-600/20">
+                          {topic.title}
+                        </span>
+                      ) : (
+                        <span className="text-slate-400 italic">Global</span>
+                      )}
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="flex justify-end gap-2">
+                        <Button variant="secondary" onClick={() => setEditingItem(item)}>
+                          <Pencil className="mr-2 h-4 w-4" /> Duzenle
+                        </Button>
+                        <Button variant="danger" onClick={() => setSelectedDeleteId(item.id)}>
+                          <Trash2 className="mr-2 h-4 w-4" /> Sil
+                        </Button>
+                      </div>
+                    </td>
+                  </tr>
+                )
+              })}
             </tbody>
           </table>
         </div>
