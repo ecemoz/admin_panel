@@ -5,10 +5,11 @@ import { Button } from '../../components/ui/Button'
 import { Input } from '../../components/ui/Input'
 
 const lessonSchema = z.object({
-  title: z.string().min(2, 'Baslik en az 2 karakter olmali.'),
-  content: z.string().min(10, 'Icerik en az 10 karakter olmali.'),
+  title: z.string().min(1, 'Baslik en az 1 karakter olmali.').max(150, 'Baslik en fazla 150 karakter olmali.'),
+  content: z.string().min(1, 'Icerik en az 1 karakter olmali.'),
   topicId: z.string().min(1, 'Topic secmelisiniz.'),
-  order: z.coerce.number().int().nonnegative('Sira 0 veya daha buyuk olmali.'),
+  order: z.coerce.number().int(),
+  isLocked: z.boolean().default(false),
 })
 
 export function LessonForm({ topics, defaultValues, onSubmit, loading = false, submitLabel = 'Kaydet' }) {
@@ -23,6 +24,7 @@ export function LessonForm({ topics, defaultValues, onSubmit, loading = false, s
       content: defaultValues?.content || '',
       topicId: defaultValues?.topicId ?? '',
       order: defaultValues?.order ?? 0,
+      isLocked: defaultValues?.isLocked ?? false,
     },
   })
 
@@ -53,7 +55,17 @@ export function LessonForm({ topics, defaultValues, onSubmit, loading = false, s
         />
         {errors.content?.message ? <p className="text-sm text-rose-600">{errors.content.message}</p> : null}
       </label>
-      <Input label="Sira" type="number" error={errors.order?.message} {...register('order')} />
+      <div className="flex gap-4">
+        <div className="flex-1">
+          <Input label="Sira" type="number" error={errors.order?.message} {...register('order')} />
+        </div>
+        <div className="flex-1">
+          <label className="flex h-full items-center gap-2 pt-6">
+            <input type="checkbox" className="h-4 w-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-600" {...register('isLocked')} />
+            <span className="text-sm font-medium text-slate-700">Kilitli Mi?</span>
+          </label>
+        </div>
+      </div>
       <div className="flex justify-end">
         <Button type="submit" disabled={loading}>
           {loading ? 'Kaydediliyor...' : submitLabel}

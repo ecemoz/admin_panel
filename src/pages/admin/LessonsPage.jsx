@@ -56,6 +56,7 @@ export function LessonsPage() {
                 <th className="px-4 py-3 font-semibold">Baslik</th>
                 <th className="px-4 py-3 font-semibold">Topic ID</th>
                 <th className="px-4 py-3 font-semibold">Sira</th>
+                <th className="px-4 py-3 font-semibold">Kilitli</th>
                 <th className="px-4 py-3 font-semibold text-right">Islem</th>
               </tr>
             </thead>
@@ -66,6 +67,13 @@ export function LessonsPage() {
                   <td className="px-4 py-3 font-medium text-slate-900">{lesson.title}</td>
                   <td className="px-4 py-3 text-slate-600">{lesson.topicId ?? '-'}</td>
                   <td className="px-4 py-3 text-slate-600">{lesson.order ?? '-'}</td>
+                  <td className="px-4 py-3 text-slate-600">
+                    {lesson.isLocked ? (
+                      <span className="inline-flex items-center rounded-full bg-rose-50 px-2 py-1 text-xs font-medium text-rose-700 ring-1 ring-inset ring-rose-600/20">Evet</span>
+                    ) : (
+                      <span className="inline-flex items-center rounded-full bg-emerald-50 px-2 py-1 text-xs font-medium text-emerald-700 ring-1 ring-inset ring-emerald-600/20">Hayir</span>
+                    )}
+                  </td>
                   <td className="px-4 py-3">
                     <div className="flex justify-end gap-2">
                       <Link to={`/admin/lessons/${lesson.id}/edit`}>

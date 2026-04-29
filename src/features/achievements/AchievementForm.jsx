@@ -5,10 +5,9 @@ import { Button } from '../../components/ui/Button'
 import { Input } from '../../components/ui/Input'
 
 const schema = z.object({
-  title: z.string().min(2, 'Baslik en az 2 karakter olmali.'),
-  description: z.string().min(5, 'Aciklama en az 5 karakter olmali.'),
-  iconUrl: z.string().url('Gecerli URL girin.').optional().or(z.literal('')),
-  requiredScore: z.coerce.number().int().nonnegative('Skor negatif olamaz.'),
+  code: z.string().min(1, 'Kod en az 1 karakter olmali.').max(100, 'Kod en fazla 100 karakter olmali.'),
+  title: z.string().min(1, 'Baslik en az 1 karakter olmali.').max(150, 'Baslik en fazla 150 karakter olmali.'),
+  description: z.string().min(1, 'Aciklama en az 1 karakter olmali.').max(500, 'Aciklama en fazla 500 karakter olmali.'),
 })
 
 export function AchievementForm({ defaultValues, onSubmit, loading = false, submitLabel = 'Kaydet' }) {
@@ -20,10 +19,9 @@ export function AchievementForm({ defaultValues, onSubmit, loading = false, subm
   } = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
+      code: defaultValues?.code || '',
       title: defaultValues?.title || '',
       description: defaultValues?.description || '',
-      iconUrl: defaultValues?.iconUrl || '',
-      requiredScore: defaultValues?.requiredScore ?? 0,
     },
   })
 
@@ -33,10 +31,11 @@ export function AchievementForm({ defaultValues, onSubmit, loading = false, subm
       onSubmit={handleSubmit((values) => {
         onSubmit(values)
         if (!defaultValues) {
-          reset({ title: '', description: '', iconUrl: '', requiredScore: 0 })
+          reset({ code: '', title: '', description: '' })
         }
       })}
     >
+      <Input label="Kod" error={errors.code?.message} {...register('code')} />
       <Input label="Baslik" error={errors.title?.message} {...register('title')} />
       <label className="block space-y-1.5">
         <span className="text-sm font-medium text-slate-700">Aciklama</span>
@@ -47,8 +46,6 @@ export function AchievementForm({ defaultValues, onSubmit, loading = false, subm
         />
         {errors.description?.message ? <p className="text-sm text-rose-600">{errors.description.message}</p> : null}
       </label>
-      <Input label="Ikon URL" error={errors.iconUrl?.message} {...register('iconUrl')} />
-      <Input label="Gerekli Skor" type="number" error={errors.requiredScore?.message} {...register('requiredScore')} />
       <div className="flex justify-end">
         <Button type="submit" disabled={loading}>
           {loading ? 'Kaydediliyor...' : submitLabel}

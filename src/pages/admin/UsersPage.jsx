@@ -67,13 +67,13 @@ export function UsersPage() {
                   <td className="px-4 py-3">
                     <select
                       className="rounded-lg border border-slate-300 px-2 py-1"
-                      value={user.role || 'USER'}
+                      value={user.role || 'User'}
                       onChange={(event) =>
                         roleMutation.mutate({ id: user.id, payload: { role: event.target.value } })
                       }
                     >
-                      <option value="USER">USER</option>
-                      <option value="ADMIN">ADMIN</option>
+                      <option value="User">User</option>
+                      <option value="Admin">Admin</option>
                     </select>
                   </td>
                   <td className="px-4 py-3 text-right">

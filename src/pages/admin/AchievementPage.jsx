@@ -95,7 +95,7 @@ export function AchievementPage() {
               <tr>
                 <th className="px-4 py-3 font-semibold">ID</th>
                 <th className="px-4 py-3 font-semibold">Baslik</th>
-                <th className="px-4 py-3 font-semibold">Gerekli Skor</th>
+                <th className="px-4 py-3 font-semibold">Kod</th>
                 <th className="px-4 py-3 font-semibold text-right">Islem</th>
               </tr>
             </thead>
@@ -104,7 +104,7 @@ export function AchievementPage() {
                 <tr key={item.id} className="border-t border-slate-100">
                   <td className="px-4 py-3 text-slate-600">{item.id}</td>
                   <td className="px-4 py-3 font-medium text-slate-900">{item.title}</td>
-                  <td className="px-4 py-3 text-slate-600">{item.requiredScore ?? 0}</td>
+                  <td className="px-4 py-3 text-slate-600">{item.code}</td>
                   <td className="px-4 py-3">
                     <div className="flex justify-end gap-2">
                       <Button variant="secondary" onClick={() => setEditingItem(item)}>

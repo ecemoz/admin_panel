@@ -5,10 +5,9 @@ import { Button } from '../../components/ui/Button'
 import { Input } from '../../components/ui/Input'
 
 const topicSchema = z.object({
-  title: z.string().min(2, 'Baslik en az 2 karakter olmali.'),
-  description: z.string().min(5, 'Aciklama en az 5 karakter olmali.'),
-  imageUrl: z.string().url('Gecerli bir URL girin.').optional().or(z.literal('')),
-  order: z.coerce.number().int().nonnegative('Sira 0 veya daha buyuk olmali.'),
+  title: z.string().min(1, 'Baslik en az 1 karakter olmali.').max(150, 'Baslik en fazla 150 karakter olmali.'),
+  description: z.string().max(500, 'Aciklama en fazla 500 karakter olmali.').optional().or(z.literal('')),
+  order: z.coerce.number().int(),
 })
 
 export function TopicForm({ defaultValues, onSubmit, loading = false, submitLabel = 'Kaydet' }) {
@@ -21,7 +20,6 @@ export function TopicForm({ defaultValues, onSubmit, loading = false, submitLabe
     defaultValues: {
       title: defaultValues?.title || '',
       description: defaultValues?.description || '',
-      imageUrl: defaultValues?.imageUrl || '',
       order: defaultValues?.order ?? 0,
     },
   })
@@ -38,7 +36,6 @@ export function TopicForm({ defaultValues, onSubmit, loading = false, submitLabe
         />
         {errors.description?.message ? <p className="text-sm text-rose-600">{errors.description.message}</p> : null}
       </label>
-      <Input label="Gorsel URL" error={errors.imageUrl?.message} {...register('imageUrl')} />
       <Input label="Sira" type="number" error={errors.order?.message} {...register('order')} />
       <div className="flex justify-end">
         <Button type="submit" disabled={loading}>
