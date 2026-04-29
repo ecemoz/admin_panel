@@ -4,7 +4,7 @@ import { Pencil, Plus, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'react-hot-toast'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { z } from 'zod'
 import { createQuiz, deleteQuiz, getQuizzes } from '../../api/quizzesApi'
 import { getTopics } from '../../api/topicsApi'
@@ -26,6 +26,7 @@ const quizSchema = z.object({
 
 export function QuizzesPage() {
   const queryClient = useQueryClient()
+  const navigate = useNavigate()
   const [selectedId, setSelectedId] = useState(null)
 
   const { data, isLoading, isError } = useQuery({ queryKey: ['quizzes'], queryFn: getQuizzes })
@@ -48,10 +49,13 @@ export function QuizzesPage() {
 
   const createMutation = useMutation({
     mutationFn: createQuiz,
-    onSuccess: () => {
+    onSuccess: (createdQuiz) => {
       toast.success('Quiz olusturuldu.')
       reset()
       queryClient.invalidateQueries({ queryKey: ['quizzes'] })
+      if (createdQuiz?.id) {
+        navigate(`/admin/quizzes/${createdQuiz.id}/edit`)
+      }
     },
     onError: () => toast.error('Quiz olusturulamadi.'),
   })
