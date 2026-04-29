@@ -16,6 +16,7 @@ import {
   updateQuestion,
   updateQuiz,
 } from '../../api/quizzesApi'
+import { getTopics } from '../../api/topicsApi'
 import { Button } from '../../components/ui/Button'
 import { ConfirmModal } from '../../components/ui/ConfirmModal'
 import { Input } from '../../components/ui/Input'
@@ -28,7 +29,7 @@ import { unwrapItem, unwrapList } from '../../lib/response'
 const quizSchema = z.object({
   title: z.string().min(2),
   description: z.string().min(5),
-  lessonId: z.coerce.number().int().positive(),
+  topicId: z.string().min(1),
   timeLimit: z.coerce.number().int().positive(),
 })
 
@@ -53,6 +54,11 @@ export function QuizEditPage() {
     queryFn: () => getQuizById(id),
   })
 
+  const { data: topicsData } = useQuery({
+    queryKey: ['topics'],
+    queryFn: getTopics,
+  })
+
   const quiz = unwrapItem(quizQuery.data)
   const questions = unwrapList(quiz?.questions)
 
@@ -61,7 +67,7 @@ export function QuizEditPage() {
     values: {
       title: quiz?.title || '',
       description: quiz?.description || '',
-      lessonId: quiz?.lessonId ?? 0,
+      topicId: quiz?.topicId ?? '',
       timeLimit: quiz?.timeLimit ?? 10,
     },
   })
@@ -163,12 +169,23 @@ export function QuizEditPage() {
               onSubmit={quizForm.handleSubmit((values) => updateQuizMutation.mutate({ id, payload: values }))}
             >
               <Input label="Baslik" error={quizForm.formState.errors.title?.message} {...quizForm.register('title')} />
-              <Input
-                label="Lesson ID"
-                type="number"
-                error={quizForm.formState.errors.lessonId?.message}
-                {...quizForm.register('lessonId')}
-              />
+              <label className="block space-y-1.5">
+                <span className="text-sm font-medium text-slate-700">Konu</span>
+                <select
+                  className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+                  {...quizForm.register('topicId')}
+                >
+                  <option value="">Konu secin...</option>
+                  {unwrapList(topicsData).map((topic) => (
+                    <option key={topic.id} value={topic.id}>
+                      {topic.title}
+                    </option>
+                  ))}
+                </select>
+                {quizForm.formState.errors.topicId?.message ? (
+                  <p className="text-sm text-rose-600">{quizForm.formState.errors.topicId.message}</p>
+                ) : null}
+              </label>
               <label className="block space-y-1.5 md:col-span-2">
                 <span className="text-sm font-medium text-slate-700">Aciklama</span>
                 <textarea

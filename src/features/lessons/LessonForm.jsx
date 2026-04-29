@@ -7,7 +7,7 @@ import { Input } from '../../components/ui/Input'
 const lessonSchema = z.object({
   title: z.string().min(2, 'Baslik en az 2 karakter olmali.'),
   content: z.string().min(10, 'Icerik en az 10 karakter olmali.'),
-  topicId: z.coerce.number().int().positive('Topic secmelisiniz.'),
+  topicId: z.string().min(1, 'Topic secmelisiniz.'),
   order: z.coerce.number().int().nonnegative('Sira 0 veya daha buyuk olmali.'),
 })
 

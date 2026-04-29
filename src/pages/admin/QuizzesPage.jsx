@@ -7,6 +7,7 @@ import { toast } from 'react-hot-toast'
 import { Link } from 'react-router-dom'
 import { z } from 'zod'
 import { createQuiz, deleteQuiz, getQuizzes } from '../../api/quizzesApi'
+import { getTopics } from '../../api/topicsApi'
 import { ConfirmModal } from '../../components/ui/ConfirmModal'
 import { Button } from '../../components/ui/Button'
 import { Input } from '../../components/ui/Input'
@@ -19,7 +20,7 @@ import { unwrapList } from '../../lib/response'
 const quizSchema = z.object({
   title: z.string().min(2, 'Baslik en az 2 karakter olmali.'),
   description: z.string().min(5, 'Aciklama en az 5 karakter olmali.'),
-  lessonId: z.coerce.number().int().positive('Lesson ID gerekli.'),
+  topicId: z.string().min(1, 'Topic secmelisiniz.'),
   timeLimit: z.coerce.number().int().positive('Sure pozitif olmali.'),
 })
 
@@ -28,6 +29,7 @@ export function QuizzesPage() {
   const [selectedId, setSelectedId] = useState(null)
 
   const { data, isLoading, isError } = useQuery({ queryKey: ['quizzes'], queryFn: getQuizzes })
+  const { data: topicsData } = useQuery({ queryKey: ['topics'], queryFn: getTopics })
 
   const {
     register,
@@ -39,7 +41,7 @@ export function QuizzesPage() {
     defaultValues: {
       title: '',
       description: '',
-      lessonId: '',
+      topicId: '',
       timeLimit: 10,
     },
   })
@@ -73,7 +75,21 @@ export function QuizzesPage() {
       <Panel title="Yeni Quiz">
         <form className="grid gap-3 md:grid-cols-2" onSubmit={handleSubmit((values) => createMutation.mutate(values))}>
           <Input label="Baslik" error={errors.title?.message} {...register('title')} />
-          <Input label="Lesson ID" type="number" error={errors.lessonId?.message} {...register('lessonId')} />
+          <label className="block space-y-1.5">
+            <span className="text-sm font-medium text-slate-700">Konu</span>
+            <select
+              className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+              {...register('topicId')}
+            >
+              <option value="">Konu secin...</option>
+              {unwrapList(topicsData).map((topic) => (
+                <option key={topic.id} value={topic.id}>
+                  {topic.title}
+                </option>
+              ))}
+            </select>
+            {errors.topicId?.message ? <p className="text-sm text-rose-600">{errors.topicId.message}</p> : null}
+          </label>
           <label className="block space-y-1.5 md:col-span-2">
             <span className="text-sm font-medium text-slate-700">Aciklama</span>
             <textarea
@@ -103,7 +119,7 @@ export function QuizzesPage() {
               <tr>
                 <th className="px-4 py-3 font-semibold">ID</th>
                 <th className="px-4 py-3 font-semibold">Baslik</th>
-                <th className="px-4 py-3 font-semibold">Lesson ID</th>
+                <th className="px-4 py-3 font-semibold">Konu</th>
                 <th className="px-4 py-3 font-semibold">Sure</th>
                 <th className="px-4 py-3 font-semibold text-right">Islem</th>
               </tr>
@@ -113,7 +129,7 @@ export function QuizzesPage() {
                 <tr key={quiz.id} className="border-t border-slate-100">
                   <td className="px-4 py-3 text-slate-600">{quiz.id}</td>
                   <td className="px-4 py-3 font-medium text-slate-900">{quiz.title}</td>
-                  <td className="px-4 py-3 text-slate-600">{quiz.lessonId ?? '-'}</td>
+                  <td className="px-4 py-3 text-slate-600">{quiz.topicId ?? '-'}</td>
                   <td className="px-4 py-3 text-slate-600">{quiz.timeLimit ?? '-'} dk</td>
                   <td className="px-4 py-3">
                     <div className="flex justify-end gap-2">
