@@ -22,6 +22,7 @@ import { Input } from '../../components/ui/Input'
 import { PageHeader } from '../../components/ui/PageHeader'
 import { Panel } from '../../components/ui/Panel'
 import { ErrorState, LoadingState } from '../../components/ui/TableStates'
+import { getErrorMessage } from '../../lib/errors'
 import { unwrapItem, unwrapList } from '../../lib/response'
 
 const quizSchema = z.object({
@@ -86,7 +87,7 @@ export function QuizEditPage() {
       toast.success('Quiz guncellendi.')
       invalidateQuiz()
     },
-    onError: () => toast.error('Quiz guncellenemedi.'),
+    onError: (error) => toast.error(getErrorMessage(error)),
   })
 
   const createQuestionMutation = useMutation({
@@ -96,7 +97,7 @@ export function QuizEditPage() {
       questionForm.reset({ text: '', points: 10 })
       invalidateQuiz()
     },
-    onError: () => toast.error('Soru eklenemedi.'),
+    onError: (error) => toast.error(getErrorMessage(error)),
   })
 
   const updateQuestionMutation = useMutation({
@@ -105,7 +106,7 @@ export function QuizEditPage() {
       toast.success('Soru guncellendi.')
       invalidateQuiz()
     },
-    onError: () => toast.error('Soru guncellenemedi.'),
+    onError: (error) => toast.error(getErrorMessage(error)),
   })
 
   const deleteQuestionMutation = useMutation({
@@ -115,7 +116,7 @@ export function QuizEditPage() {
       setSelectedQuestionId(null)
       invalidateQuiz()
     },
-    onError: () => toast.error('Soru silinemedi.'),
+    onError: (error) => toast.error(getErrorMessage(error)),
   })
 
   const createOptionMutation = useMutation({
@@ -125,7 +126,7 @@ export function QuizEditPage() {
       optionForm.reset({ text: '', isCorrect: false })
       invalidateQuiz()
     },
-    onError: () => toast.error('Secenek eklenemedi.'),
+    onError: (error) => toast.error(getErrorMessage(error)),
   })
 
   const updateOptionMutation = useMutation({
@@ -134,7 +135,7 @@ export function QuizEditPage() {
       toast.success('Secenek guncellendi.')
       invalidateQuiz()
     },
-    onError: () => toast.error('Secenek guncellenemedi.'),
+    onError: (error) => toast.error(getErrorMessage(error)),
   })
 
   const deleteOptionMutation = useMutation({
@@ -144,7 +145,7 @@ export function QuizEditPage() {
       setSelectedOptionId(null)
       invalidateQuiz()
     },
-    onError: () => toast.error('Secenek silinemedi.'),
+    onError: (error) => toast.error(getErrorMessage(error)),
   })
 
   return (

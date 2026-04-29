@@ -6,6 +6,7 @@ import { Panel } from '../../components/ui/Panel'
 import { PageHeader } from '../../components/ui/PageHeader'
 import { ErrorState, LoadingState } from '../../components/ui/TableStates'
 import { TopicForm } from '../../features/topics/TopicForm'
+import { getErrorMessage } from '../../lib/errors'
 import { unwrapList } from '../../lib/response'
 
 export function TopicEditPage() {
@@ -22,7 +23,7 @@ export function TopicEditPage() {
       queryClient.invalidateQueries({ queryKey: ['topics'] })
       navigate('/admin/topics')
     },
-    onError: () => toast.error('Topic guncellenemedi.'),
+    onError: (error) => toast.error(getErrorMessage(error)),
   })
 
   const topic = unwrapList(data).find((item) => String(item.id) === String(id))

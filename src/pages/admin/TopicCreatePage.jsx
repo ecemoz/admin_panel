@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { createTopic } from '../../api/topicsApi'
 import { Panel } from '../../components/ui/Panel'
 import { PageHeader } from '../../components/ui/PageHeader'
+import { getErrorMessage } from '../../lib/errors'
 import { TopicForm } from '../../features/topics/TopicForm'
 
 export function TopicCreatePage() {
@@ -17,7 +18,7 @@ export function TopicCreatePage() {
       queryClient.invalidateQueries({ queryKey: ['topics'] })
       navigate('/admin/topics')
     },
-    onError: () => toast.error('Topic olusturulamadi.'),
+    onError: (error) => toast.error(getErrorMessage(error)),
   })
 
   return (

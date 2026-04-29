@@ -7,6 +7,7 @@ import { ConfirmModal } from '../../components/ui/ConfirmModal'
 import { Button } from '../../components/ui/Button'
 import { EmptyState, ErrorState, LoadingState } from '../../components/ui/TableStates'
 import { PageHeader } from '../../components/ui/PageHeader'
+import { getErrorMessage } from '../../lib/errors'
 import { unwrapList } from '../../lib/response'
 
 export function UsersPage() {
@@ -24,7 +25,7 @@ export function UsersPage() {
       toast.success('Kullanici rolu guncellendi.')
       queryClient.invalidateQueries({ queryKey: ['users'] })
     },
-    onError: () => toast.error('Rol guncellenemedi.'),
+    onError: (error) => toast.error(getErrorMessage(error)),
   })
 
   const deleteMutation = useMutation({
@@ -34,7 +35,7 @@ export function UsersPage() {
       setDeleteId(null)
       queryClient.invalidateQueries({ queryKey: ['users'] })
     },
-    onError: () => toast.error('Kullanici silinemedi.'),
+    onError: (error) => toast.error(getErrorMessage(error)),
   })
 
   const users = unwrapList(data)

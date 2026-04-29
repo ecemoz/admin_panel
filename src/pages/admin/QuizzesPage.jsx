@@ -13,6 +13,7 @@ import { Input } from '../../components/ui/Input'
 import { PageHeader } from '../../components/ui/PageHeader'
 import { Panel } from '../../components/ui/Panel'
 import { EmptyState, ErrorState, LoadingState } from '../../components/ui/TableStates'
+import { getErrorMessage } from '../../lib/errors'
 import { unwrapList } from '../../lib/response'
 
 const quizSchema = z.object({
@@ -60,7 +61,7 @@ export function QuizzesPage() {
       setSelectedId(null)
       queryClient.invalidateQueries({ queryKey: ['quizzes'] })
     },
-    onError: () => toast.error('Quiz silinemedi.'),
+    onError: (error) => toast.error(getErrorMessage(error)),
   })
 
   const quizzes = unwrapList(data)

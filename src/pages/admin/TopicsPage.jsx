@@ -8,6 +8,7 @@ import { ConfirmModal } from '../../components/ui/ConfirmModal'
 import { Button } from '../../components/ui/Button'
 import { EmptyState, ErrorState, LoadingState } from '../../components/ui/TableStates'
 import { PageHeader } from '../../components/ui/PageHeader'
+import { getErrorMessage } from '../../lib/errors'
 import { unwrapList } from '../../lib/response'
 
 export function TopicsPage() {
@@ -23,7 +24,7 @@ export function TopicsPage() {
       queryClient.invalidateQueries({ queryKey: ['topics'] })
       setSelectedId(null)
     },
-    onError: () => toast.error('Topic silinemedi.'),
+    onError: (error) => toast.error(getErrorMessage(error)),
   })
 
   const topics = unwrapList(data)

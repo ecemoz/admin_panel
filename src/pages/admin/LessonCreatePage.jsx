@@ -7,6 +7,7 @@ import { Panel } from '../../components/ui/Panel'
 import { PageHeader } from '../../components/ui/PageHeader'
 import { ErrorState, LoadingState } from '../../components/ui/TableStates'
 import { LessonForm } from '../../features/lessons/LessonForm'
+import { getErrorMessage } from '../../lib/errors'
 import { unwrapList } from '../../lib/response'
 
 export function LessonCreatePage() {
@@ -22,7 +23,7 @@ export function LessonCreatePage() {
       queryClient.invalidateQueries({ queryKey: ['lessons'] })
       navigate('/admin/lessons')
     },
-    onError: () => toast.error('Lesson olusturulamadi.'),
+    onError: (error) => toast.error(getErrorMessage(error)),
   })
 
   const topics = unwrapList(data)

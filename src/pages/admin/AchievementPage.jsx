@@ -13,6 +13,7 @@ import { EmptyState, ErrorState, LoadingState } from '../../components/ui/TableS
 import { PageHeader } from '../../components/ui/PageHeader'
 import { Panel } from '../../components/ui/Panel'
 import { Button } from '../../components/ui/Button'
+import { getErrorMessage } from '../../lib/errors'
 import { AchievementForm } from '../../features/achievements/AchievementForm'
 import { unwrapList } from '../../lib/response'
 
@@ -32,7 +33,7 @@ export function AchievementPage() {
       toast.success('Achievement eklendi.')
       queryClient.invalidateQueries({ queryKey: ['achievements'] })
     },
-    onError: () => toast.error('Achievement eklenemedi.'),
+    onError: (error) => toast.error(getErrorMessage(error)),
   })
 
   const updateMutation = useMutation({
@@ -42,7 +43,7 @@ export function AchievementPage() {
       setEditingItem(null)
       queryClient.invalidateQueries({ queryKey: ['achievements'] })
     },
-    onError: () => toast.error('Achievement guncellenemedi.'),
+    onError: (error) => toast.error(getErrorMessage(error)),
   })
 
   const deleteMutation = useMutation({
@@ -52,7 +53,7 @@ export function AchievementPage() {
       setSelectedDeleteId(null)
       queryClient.invalidateQueries({ queryKey: ['achievements'] })
     },
-    onError: () => toast.error('Achievement silinemedi.'),
+    onError: (error) => toast.error(getErrorMessage(error)),
   })
 
   const achievements = unwrapList(data)
