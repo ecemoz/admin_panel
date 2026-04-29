@@ -16,7 +16,17 @@ export function parseJwt(token) {
 function extractRolesFromPayload(payload) {
   if (!payload) return []
 
-  const candidates = [payload.role, payload.roles, payload.authorities]
+  // Standard claim names
+  let candidates = [payload.role, payload.roles, payload.authorities]
+
+  // .NET namespace-prefixed claim names
+  const dotNetRoleClaim = Object.keys(payload).find((key) =>
+    key.includes('claims/role') || key.includes('claims/roles'),
+  )
+  if (dotNetRoleClaim && payload[dotNetRoleClaim]) {
+    candidates.push(payload[dotNetRoleClaim])
+  }
+
   return candidates
     .flatMap((value) => {
       if (!value) return []
@@ -36,11 +46,28 @@ export function userFromToken(token) {
   const payload = parseJwt(token)
   if (!payload) return null
 
+  // Standard claims
+  let id = payload.sub
+  let email = payload.email
+  let name = payload.name
+  let role = payload.role
+
+  // .NET namespace-prefixed claim names
+  const nameIdClaim = Object.keys(payload).find((key) => key.includes('nameidentifier'))
+  const emailClaim = Object.keys(payload).find((key) => key.includes('emailaddress'))
+  const nameClaim = Object.keys(payload).find((key) => key.includes('/name') && !key.includes('identifier'))
+  const roleClaim = Object.keys(payload).find((key) => key.includes('claims/role'))
+
+  if (nameIdClaim) id = payload[nameIdClaim]
+  if (emailClaim) email = payload[emailClaim]
+  if (nameClaim) name = payload[nameClaim]
+  if (roleClaim) role = payload[roleClaim]
+
   return {
-    id: payload.sub,
-    email: payload.email,
-    name: payload.name,
-    role: payload.role,
+    id,
+    email,
+    name,
+    role,
     roles: payload.roles,
   }
 }

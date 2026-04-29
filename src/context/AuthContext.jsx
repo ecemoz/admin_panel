@@ -33,7 +33,18 @@ export function AuthProvider({ children }) {
       throw new Error('Only admin users can access this panel')
     }
 
-    const currentUser = response?.user || response?.data?.user || userFromToken(accessToken)
+    // Parse user from response or token payload
+    let currentUser = response?.user || response?.data?.user || userFromToken(accessToken)
+
+    // Fallback: if response has top-level user fields, merge them
+    if (response?.email || response?.userName) {
+      currentUser = {
+        ...currentUser,
+        email: response.email || currentUser?.email,
+        name: response.userName || currentUser?.name,
+        role: response.role || currentUser?.role,
+      }
+    }
 
     setAuthStorage(accessToken, currentUser)
     setToken(accessToken)
