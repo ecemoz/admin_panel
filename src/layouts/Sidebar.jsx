@@ -1,4 +1,4 @@
-import { X, LayoutDashboard, BookOpen, Library, Trophy, CircleHelp, Users, LogOut } from 'lucide-react'
+import { X, LayoutDashboard, BookOpen, Library, Trophy, CircleHelp, Users, LogOut, PlayCircle } from 'lucide-react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 
@@ -9,6 +9,7 @@ const menuItems = [
   { to: '/admin/quizzes', label: 'Quizzes', icon: CircleHelp },
   { to: '/admin/achievements', label: 'Achievements', icon: Trophy },
   { to: '/admin/users', label: 'Users', icon: Users },
+  { to: '/admin/simulator', label: 'Simulator', icon: PlayCircle },
 ]
 
 export function Sidebar({ open, onClose }) {

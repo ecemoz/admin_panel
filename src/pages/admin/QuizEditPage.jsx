@@ -246,7 +246,16 @@ function QuestionCard({ index, question, onDelete, onDeleteOption, invalidateQui
     onError: (error) => toast.error(getErrorMessage(error)),
   })
 
-  const options = unwrapList(question.options)
+  const options = [...unwrapList(question?.options)].sort((a, b) => {
+    if (!a || !b) return 0
+    if (typeof a.order === 'number' && typeof b.order === 'number') return a.order - b.order
+    if (a.createdAt && b.createdAt) return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+    
+    const idA = String(a.id || a._id || '')
+    const idB = String(b.id || b._id || '')
+    if (idA.length === 24 && idB.length === 24) return idA.localeCompare(idB)
+    return idA.localeCompare(idB, undefined, { numeric: true })
+  })
 
   return (
     <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-shadow hover:shadow-md">
@@ -408,7 +417,16 @@ export function QuizEditPage() {
   })
 
   const quiz = unwrapItem(quizQuery.data)
-  const questions = unwrapList(quiz?.questions)
+  const questions = [...unwrapList(quiz?.questions)].sort((a, b) => {
+    if (!a || !b) return 0
+    if (typeof a.order === 'number' && typeof b.order === 'number') return a.order - b.order
+    if (a.createdAt && b.createdAt) return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+    
+    const idA = String(a.id || a._id || '')
+    const idB = String(b.id || b._id || '')
+    if (idA.length === 24 && idB.length === 24) return idA.localeCompare(idB)
+    return idA.localeCompare(idB, undefined, { numeric: true })
+  })
 
   function invalidateQuiz() {
     queryClient.invalidateQueries({ queryKey: ['quiz', id] })

@@ -12,6 +12,7 @@ import { TopicCreatePage } from '../pages/admin/TopicCreatePage'
 import { TopicEditPage } from '../pages/admin/TopicEditPage'
 import { TopicsPage } from '../pages/admin/TopicsPage'
 import { UsersPage } from '../pages/admin/UsersPage'
+import { ClientSimulatorPage } from '../pages/admin/ClientSimulatorPage'
 import { ProtectedRoute } from '../routes/ProtectedRoute'
 
 export const appRouter = createBrowserRouter([
@@ -41,6 +42,7 @@ export const appRouter = createBrowserRouter([
           { path: 'quizzes/:id/edit', element: <QuizEditPage /> },
           { path: 'achievements', element: <AchievementPage /> },
           { path: 'users', element: <UsersPage /> },
+          { path: 'simulator', element: <ClientSimulatorPage /> },
         ],
       },
     ],
